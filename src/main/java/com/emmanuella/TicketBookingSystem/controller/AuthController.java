@@ -1,11 +1,13 @@
 package com.emmanuella.TicketBookingSystem.controller;
 
+import com.emmanuella.TicketBookingSystem.dto.AuthResponseDto;
 import com.emmanuella.TicketBookingSystem.dto.LoginDto;
 import com.emmanuella.TicketBookingSystem.dto.UserDto;
 import com.emmanuella.TicketBookingSystem.models.Role;
 import com.emmanuella.TicketBookingSystem.models.User;
 import com.emmanuella.TicketBookingSystem.repository.RoleRepository;
 import com.emmanuella.TicketBookingSystem.repository.UserRepository;
+import com.emmanuella.TicketBookingSystem.security.TokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.SQLOutput;
-import java.util.Collection;
 import java.util.Collections;
 
 @RestController
@@ -31,13 +31,16 @@ public class AuthController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private TokenGenerator tokenGenerator;
+
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, TokenGenerator tokenGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenGenerator = tokenGenerator;
     }
 
     @PostMapping("register")
@@ -59,9 +62,10 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("Login Successful!", HttpStatus.OK);
+        String token = tokenGenerator.generateToken(authentication);
+        return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }
 }
