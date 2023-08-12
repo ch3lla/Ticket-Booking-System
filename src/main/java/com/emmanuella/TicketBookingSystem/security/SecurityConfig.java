@@ -40,7 +40,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
+/*    @Bean
     public UserDetailsService users(){
         UserDetails admin = User.builder()
                 .username("admin")
@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(admin, user);
-    }
+    }*/
 
     @Bean
     public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception{

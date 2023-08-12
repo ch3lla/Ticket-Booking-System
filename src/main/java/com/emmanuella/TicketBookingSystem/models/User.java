@@ -28,14 +28,6 @@ public class User {
         password = this.password;
     }
 
-    public User(UserDto userDto){
-        if (userDto.getUserName() != null){
-            this.username = userDto.getUserName();
-        }
-        if (userDto.getPassword() != null){
-            this.username = userDto.getPassword();
-        }
-    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
