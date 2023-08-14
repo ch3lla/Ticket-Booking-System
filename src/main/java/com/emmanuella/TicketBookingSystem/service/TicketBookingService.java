@@ -18,7 +18,7 @@ public class TicketBookingService {
         return ticketBookingRepository.save(ticket);
     }
 
-    public Optional<Ticket> getTicketById(Integer ticketId){
+    public Optional<Ticket> getTicketById(String ticketId){
         return ticketBookingRepository.findById(ticketId);
     }
 
@@ -26,14 +26,18 @@ public class TicketBookingService {
         return ticketBookingRepository.findAll();
     }
 
-    public void deleteTicket(Integer ticketId){
+    public void deleteTicket(String ticketId){
         ticketBookingRepository.deleteById(ticketId);
     }
 
-    public Ticket updateTicket(String email, String newEmail){
-        Ticket ticketFromDb = ticketBookingRepository.findByEmail(email);
-        ticketFromDb.setEmail(newEmail);
-        return ticketBookingRepository.save(ticketFromDb);
+    public Ticket updateTicket(String ticketId, String newEmail){
+        Optional<Ticket> ticketFromDb = ticketBookingRepository.findById(ticketId);
+        if(ticketFromDb.isPresent()){
+            Ticket ticket = ticketFromDb.get();
+            ticket.setEmail(newEmail);
+            return ticketBookingRepository.save(ticket);
+        }
+        return null;
     }
 
     public Ticket getTicketByEmail(String email){

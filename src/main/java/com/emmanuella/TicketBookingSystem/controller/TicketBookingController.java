@@ -3,44 +3,46 @@ package com.emmanuella.TicketBookingSystem.controller;
 import com.emmanuella.TicketBookingSystem.models.Ticket;
 import com.emmanuella.TicketBookingSystem.service.TicketBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/tickets")
+@PreAuthorize("hasRole('ADMIN') or (hasRole('USER')")
 public class TicketBookingController {
-
     @Autowired
     private TicketBookingService ticketBookingService;
 
-    @PostMapping(value = "/ticket")
+    @PostMapping()
     public Ticket createTicket(@RequestBody Ticket ticket){
         return ticketBookingService.createTicket(ticket);
     }
 
-    @GetMapping(value = "/ticket/{ticketId}")
-    public Optional<Ticket> getTicketById(@PathVariable("ticketId")Integer ticketId){
+    @GetMapping("/{ticketId}")
+    public Optional<Ticket> getTicketById(@PathVariable String ticketId){
         return ticketBookingService.getTicketById(ticketId);
     }
 
-    @GetMapping(value = "/alltickets")
+    @GetMapping()
     public Iterable<Ticket> getAllBookedTickets(){
         return ticketBookingService.getAllBookedTickets();
     }
 
-    @GetMapping(value = "/email/{email:.+}")
-    public Ticket getTicketByEmail(@PathVariable("email")String email){
+    @GetMapping("/email/{email:.+}")
+    public Ticket getTicketByEmail(@PathVariable String email){
         return ticketBookingService.getTicketByEmail(email);
     }
 
-    @DeleteMapping(value = "/ticket/{ticketId}")
-    public void deleteTicket(@PathVariable("ticketId")Integer ticketId){
+    @DeleteMapping("/{ticketId}")
+    public void deleteTicket(@PathVariable String ticketId){
         ticketBookingService.deleteTicket(ticketId);
     }
 
-    @PutMapping(value = "/ticket/{email}/newEmail/{newEmail:.+}")
-    public Ticket updateTicket(@PathVariable("email")String email, @PathVariable("newEmail")String newEmail){
-        return ticketBookingService.updateTicket(email, newEmail);
+    @PutMapping("/{ticketId}/newEmail/{newEmail:.+}")
+    public Ticket updateTicket(@PathVariable String ticketId, @PathVariable String newEmail){
+        return ticketBookingService.updateTicket(ticketId, newEmail);
     }
 
 }
