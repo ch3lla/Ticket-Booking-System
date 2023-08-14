@@ -1,6 +1,7 @@
 package com.emmanuella.TicketBookingSystem.service;
 
 
+import com.emmanuella.TicketBookingSystem.dto.TicketDto;
 import com.emmanuella.TicketBookingSystem.models.Ticket;
 import com.emmanuella.TicketBookingSystem.repository.TicketBookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,14 @@ public class TicketBookingService {
     @Autowired
     private TicketBookingRepository ticketBookingRepository;
 
-    public Ticket createTicket(Ticket ticket){
+    public Ticket createTicket(TicketDto ticketDto){
+        Ticket ticket = new Ticket();
+        ticket.setPassengerName(ticketDto.getPassengerName());
+        ticket.setBookingDate(ticketDto.getBookingDate());
+        ticket.setSourceStation(ticketDto.getSourceStation());
+        ticket.setDestStation(ticketDto.getDestStation());
+        ticket.setEmail(ticketDto.getEmail());
+
         return ticketBookingRepository.save(ticket);
     }
 
