@@ -1,5 +1,6 @@
 package com.emmanuella.TicketBookingSystem.controller;
 
+import ch.qos.logback.core.model.Model;
 import com.emmanuella.TicketBookingSystem.dto.TicketDto;
 import com.emmanuella.TicketBookingSystem.models.Ticket;
 import com.emmanuella.TicketBookingSystem.service.TicketBookingService;
@@ -17,7 +18,7 @@ public class TicketBookingController {
     private TicketBookingService ticketBookingService;
 
     @PostMapping()
-    public ResponseEntity<Ticket> createTicket(@RequestBody TicketDto ticketDto){
+    public ResponseEntity<Ticket> createTicket(@RequestBody TicketDto ticketDto, Model model){
         return new ResponseEntity<>(ticketBookingService.createTicket(ticketDto), HttpStatus.CREATED);
     }
 

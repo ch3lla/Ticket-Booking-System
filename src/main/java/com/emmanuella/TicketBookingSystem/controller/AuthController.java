@@ -8,6 +8,7 @@ import com.emmanuella.TicketBookingSystem.models.User;
 import com.emmanuella.TicketBookingSystem.repository.RoleRepository;
 import com.emmanuella.TicketBookingSystem.repository.UserRepository;
 import com.emmanuella.TicketBookingSystem.security.TokenGenerator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,25 +46,27 @@ public class AuthController {
 
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody UserDto userDto){
-        if(userRepository.existsByUsername(userDto.getUserName())){
+        if(userRepository.existsByUsername(userDto.getUsername())){
             return new ResponseEntity<>("Username is taken!", HttpStatus.BAD_REQUEST);
         }
         User user = new User();
-        user.setUsername(userDto.getUserName());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setUsername(userDto.getUsername());
+        if(userDto.getPassword().equals(userDto.getConfirmPassword())){
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        } else {
+            return new ResponseEntity<>("Passwords do not match!", HttpStatus.BAD_REQUEST);
+        }
         user.setEmail(userDto.getEmail());
-
         Role roles = roleRepository.findByName("USER").get();
         user.setRoles(Collections.singletonList(roles));
-
         userRepository.save(user);
-
         return new ResponseEntity<>("User successfully registered!", HttpStatus.OK);
     }
 
     @PostMapping("login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        //System.out.println("Authentication: " + authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenGenerator.generateToken(authentication);
         return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);

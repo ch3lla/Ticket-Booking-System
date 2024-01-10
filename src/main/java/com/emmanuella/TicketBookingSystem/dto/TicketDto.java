@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class TicketDto {
     private String passengerName;
-    private Date bookingDate;
+    private Date dateOfDeparture;
     private String sourceStation;
     private String destStation;
     private String email;

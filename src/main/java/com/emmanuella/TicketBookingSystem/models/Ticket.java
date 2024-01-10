@@ -19,14 +19,36 @@ public class Ticket {
     private String ticketId;
 
     private String passengerName;
-    private Date bookingDate;
+
+    @Temporal(TemporalType.DATE)
+    private Date dateOfDeparture;
     private String sourceStation;
     private String destStation;
     private String email;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = createdAt; // Initialize updatedAt with createdAt on creation
+    }
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
+
+
+/*    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "bus_ticket", joinColumns = @JoinColumn(name = "ticket_id", referencedColumnName = "ticketId"),
             inverseJoinColumns = @JoinColumn(name = "bus_id", referencedColumnName = "id"))
-    private List<Bus> bus = new ArrayList<>();
+    private List<Bus> bus = new ArrayList<>();*/
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "bus_id", referencedColumnName = "id")
+    private Bus bus;
 
 }
